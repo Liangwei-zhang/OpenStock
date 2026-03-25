@@ -1,5 +1,6 @@
 import TradingViewWidget from "@/components/TradingViewWidget";
 import WatchlistButton from "@/components/WatchlistButton";
+import StockSentimentCard from "@/components/stocks/StockSentimentCard";
 import {
     SYMBOL_INFO_WIDGET_CONFIG,
     CANDLE_CHART_WIDGET_CONFIG,
@@ -12,6 +13,7 @@ import {
 import { auth } from '@/lib/better-auth/auth';
 import { headers } from 'next/headers';
 import { isStockInWatchlist } from '@/lib/actions/watchlist.actions';
+import { getStockSentimentInsights } from '@/lib/actions/adanos.actions';
 import { formatSymbolForTradingView } from '@/lib/utils';
 
 export default async function StockDetails({ params }: StockDetailsPageProps) {
@@ -24,6 +26,7 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
     });
     const userId = session?.user?.id;
     const isInWatchlist = userId ? await isStockInWatchlist(userId, symbol) : false;
+    const sentimentInsights = await getStockSentimentInsights(symbol);
 
     return (
         <div className="flex min-h-screen p-4 md:p-6 lg:p-8">
@@ -63,6 +66,8 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
                             userId={userId}
                         />
                     </div>
+
+                    <StockSentimentCard insight={sentimentInsights} />
 
                     <TradingViewWidget
                         scriptUrl={`${scriptUrl}technical-analysis.js`}

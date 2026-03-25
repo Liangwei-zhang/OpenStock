@@ -114,6 +114,7 @@ Language composition
 - Stock details
     - TradingView symbol info, candlestick/advanced charts, baseline, technicals
     - Company profile and financials widgets
+    - Optional cross-source sentiment insights for Reddit, X.com, news, and Polymarket
 - Market overview
     - Heatmap, quotes, and top stories (TradingView widgets)
 - Personalized onboarding
@@ -253,6 +254,10 @@ BETTER_AUTH_URL=http://localhost:3000
 NEXT_PUBLIC_FINNHUB_API_KEY=your_finnhub_key
 FINNHUB_BASE_URL=https://finnhub.io/api/v1
 
+# Sentiment insights (optional)
+ADANOS_API_KEY=your_adanos_api_key
+# ADANOS_API_BASE_URL=https://api.adanos.org
+
 # AI Provider (optional, default: "gemini")
 # Supported: "gemini", "minimax", "siray"
 # AI_PROVIDER=gemini
@@ -289,6 +294,10 @@ BETTER_AUTH_URL=http://localhost:3000
 # Note: NEXT_PUBLIC_FINNHUB_API_KEY is required for Vercel deployment
 NEXT_PUBLIC_FINNHUB_API_KEY=your_finnhub_key
 FINNHUB_BASE_URL=https://finnhub.io/api/v1
+
+# Sentiment insights (optional)
+ADANOS_API_KEY=your_adanos_api_key
+# ADANOS_API_BASE_URL=https://api.adanos.org
 
 # AI Provider (optional, default: "gemini")
 # Supported: "gemini", "minimax", "siray"
@@ -361,6 +370,11 @@ public/assets/images/   # logos and screenshots
     - Stock search, company profiles, and market news.
     - Set `NEXT_PUBLIC_FINNHUB_API_KEY` and `FINNHUB_BASE_URL` (default: https://finnhub.io/api/v1).
     - Free tiers may return delayed quotes; respect rate limits and terms.
+
+- Adanos sentiment insights (optional)
+    - Structured stock sentiment snapshots across Reddit, X.com, news, and Polymarket.
+    - Set `ADANOS_API_KEY`; optionally override the API host with `ADANOS_API_BASE_URL`.
+    - Used only for the stock detail sentiment card and does not replace Finnhub or TradingView.
 
 - TradingView
     - Embeddable widgets used for charts, heatmap, quotes, and timelines.
@@ -451,4 +465,3 @@ Huge thanks to [Adrian Hajdin (JavaScript Mastery)](https://github.com/adrianhaj
 GitHub: [adrianhajdin](https://github.com/adrianhajdin)
 YouTube tutorial: [Stock Market App Tutorial](https://www.youtube.com/watch?v=gu4pafNCXng)
 YouTube channel: [JavaScript Mastery](https://www.youtube.com/@javascriptmastery)
-

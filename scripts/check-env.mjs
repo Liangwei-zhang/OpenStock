@@ -31,6 +31,8 @@ const requiredVars = {
 
 const optionalVars = {
     'FINNHUB_API_KEY': 'Legacy Finnhub key (deprecated, use NEXT_PUBLIC_FINNHUB_API_KEY)',
+    'ADANOS_API_KEY': 'Optional Adanos API key for stock sentiment insights',
+    'ADANOS_API_BASE_URL': 'Optional Adanos API base URL override',
 };
 
 console.log('🔍 Checking Environment Variables...\n');
@@ -109,4 +111,3 @@ function maskValue(value) {
     }
     return value.substring(0, 4) + '***' + value.substring(value.length - 4);
 }
-
