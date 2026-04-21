@@ -4,39 +4,6 @@ export const NAV_ITEMS = [
     { href: '/watchlist', label: 'Watchlist' },
 ];
 
-// Sign-up form select options
-export const INVESTMENT_GOALS = [
-    { value: 'Growth', label: 'Growth' },
-    { value: 'Income', label: 'Income' },
-    { value: 'Balanced', label: 'Balanced' },
-    { value: 'Conservative', label: 'Conservative' },
-];
-
-export const RISK_TOLERANCE_OPTIONS = [
-    { value: 'Low', label: 'Low' },
-    { value: 'Medium', label: 'Medium' },
-    { value: 'High', label: 'High' },
-];
-
-export const PREFERRED_INDUSTRIES = [
-    { value: 'Technology', label: 'Technology' },
-    { value: 'Healthcare', label: 'Healthcare' },
-    { value: 'Finance', label: 'Finance' },
-    { value: 'Energy', label: 'Energy' },
-    { value: 'Consumer Goods', label: 'Consumer Goods' },
-];
-
-export const ALERT_TYPE_OPTIONS = [
-    { value: 'upper', label: 'Upper' },
-    { value: 'lower', label: 'Lower' },
-];
-
-export const CONDITION_OPTIONS = [
-    { value: 'greater', label: 'Greater than (>)' },
-    { value: 'less', label: 'Less than (<)' },
-];
-
-// TradingView Charts
 export const MARKET_OVERVIEW_WIDGET_CONFIG = {
     colorTheme: 'dark',
     dateRange: '12M',
@@ -93,25 +60,6 @@ export const MARKET_OVERVIEW_WIDGET_CONFIG = {
     height: 600,
     showSymbolLogo: true,
     showChart: true,
-};
-
-export const HEATMAP_WIDGET_CONFIG = {
-    dataSource: 'SPX500',
-    blockSize: 'market_cap_basic',
-    blockColor: 'change',
-    grouping: 'sector',
-    isTransparent: true,
-    locale: 'en',
-    symbolUrl: '',
-    colorTheme: 'dark',
-    exchanges: [],
-    hasTopBar: false,
-    isDataSetEnabled: false,
-    isZoomEnabled: true,
-    hasSymbolTooltip: true,
-    isMonoSize: false,
-    width: '100%',
-    height: '600',
 };
 
 export const TOP_STORIES_WIDGET_CONFIG = {
@@ -205,43 +153,6 @@ export const CANDLE_CHART_WIDGET_CONFIG = (symbol: string) => ({
     height: 600,
 });
 
-export const BASELINE_WIDGET_CONFIG = (symbol: string) => ({
-    allow_symbol_change: false,
-    calendar: false,
-    details: false,
-    hide_side_toolbar: true,
-    hide_top_toolbar: false,
-    hide_legend: false,
-    hide_volume: false,
-    hotlist: false,
-    interval: 'D',
-    locale: 'en',
-    save_image: false,
-    style: 10,
-    symbol: symbol.toUpperCase(),
-    theme: 'dark',
-    timezone: 'Etc/UTC',
-    backgroundColor: '#141414',
-    gridColor: '#141414',
-    watchlist: [],
-    withdateranges: false,
-    compareSymbols: [],
-    studies: [],
-    width: '100%',
-    height: 600,
-});
-
-export const TECHNICAL_ANALYSIS_WIDGET_CONFIG = (symbol: string) => ({
-    symbol: symbol.toUpperCase(),
-    colorTheme: 'dark',
-    isTransparent: 'true',
-    locale: 'en',
-    width: '100%',
-    height: 400,
-    interval: '1h',
-    largeChartUrl: '',
-});
-
 export const COMPANY_PROFILE_WIDGET_CONFIG = (symbol: string) => ({
     symbol: symbol.toUpperCase(),
     colorTheme: 'dark',
@@ -314,9 +225,6 @@ export const POPULAR_STOCK_SYMBOLS = [
     'GRAB',
     'SE',
 ];
-
-export const NO_MARKET_NEWS =
-    '<p class="mobile-text" style="margin:0 0 20px 0;font-size:16px;line-height:1.6;color:#4b5563;">No market news available today. Please check back tomorrow.</p>';
 
 export const WATCHLIST_TABLE_HEADER = [
     'Company',
