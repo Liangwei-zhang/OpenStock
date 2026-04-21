@@ -1,27 +1,11 @@
 'use server';
 
 import { auth } from "@/lib/better-auth/auth";
-import { inngest } from "@/lib/inngest/client";
 import { headers } from "next/headers";
 
-export const signUpWithEmail = async ({ email, password, fullName, country, investmentGoals, riskTolerance, preferredIndustry }: SignUpFormData) => {
+export const signUpWithEmail = async ({ email, password, fullName }: SignUpFormData) => {
     try {
         const response = await auth.api.signUpEmail({ body: { email, password, name: fullName } })
-
-        if (response) {
-            try {
-                console.log('📤 Sending Inngest event: app/user.created for', email);
-                await inngest.send({
-                    name: 'app/user.created',
-                    data: { email, name: fullName, country, investmentGoals, riskTolerance, preferredIndustry }
-                });
-                console.log('✅ Inngest event sent successfully');
-            } catch (error) {
-                console.error('❌ Failed to send Inngest event:', error);
-                // Don't fail signup if email fails
-            }
-        }
-
         return { success: true, data: response }
     } catch (e) {
         console.log('Sign up failed', e)
@@ -33,10 +17,8 @@ export const signInWithEmail = async ({ email, password }: SignInFormData) => {
     try {
         const response = await auth.api.signInEmail({ body: { email, password } })
 
-        // Update lastActiveAt
         if (response) {
             try {
-                // Dynamic import or ensure path is correct
                 const { connectToDatabase } = await import("@/database/mongoose");
                 const mongoose = await connectToDatabase();
                 const db = mongoose.connection.db;
@@ -66,4 +48,3 @@ export const signOut = async () => {
         return { success: false, error: 'Sign out failed' }
     }
 }
-
