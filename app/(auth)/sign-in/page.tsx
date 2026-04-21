@@ -4,11 +4,9 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import InputField from '@/components/forms/InputField';
 import FooterLink from '@/components/forms/FooterLink';
-import { signInWithEmail, signUpWithEmail } from "@/lib/actions/auth.actions";
+import { signInWithEmail } from "@/lib/actions/auth.actions";
 import { toast } from "sonner";
-import { signInEmail } from "better-auth/api";
 import { useRouter } from "next/navigation";
-import OpenDevSocietyBranding from "@/components/OpenDevSocietyBranding";
 import React from "react";
 
 const SignIn = () => {
@@ -46,12 +44,15 @@ const SignIn = () => {
     return (
         <>
             <h1 className="form-title">Welcome back</h1>
+            <p className="text-sm text-gray-400 mb-6">
+                Sign in to continue tracking stocks, managing your watchlist, and reviewing alerts.
+            </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 <InputField
                     name="email"
                     label="Email"
-                    placeholder="opendevsociety@cc.cc"
+                    placeholder="you@example.com"
                     register={register}
                     error={errors.email}
                     validation={{
@@ -78,18 +79,9 @@ const SignIn = () => {
                 </Button>
 
                 <FooterLink text="Don't have an account?" linkText="Create an account" href="/sign-up" />
-                <OpenDevSocietyBranding outerClassName="mt-10 flex justify-center" />
-                <div className="mt-5 flex justify-center">
-                    <a href="https://peerlist.io/ravixalgorithm/project/openstock" target="_blank" rel="noreferrer">
-                        <img
-                            src="https://peerlist.io/api/v1/projects/embed/PRJH8OED7MBL9MGB9HRMKAKLM66KNN?showUpvote=true&theme=light"
-                            alt="OpenStock"
-                            style={{ width: 'auto', height: '72px' }}
-                        />
-                    </a>
-                </div>
             </form>
         </>
     );
 };
+
 export default SignIn;
