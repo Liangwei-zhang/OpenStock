@@ -22,7 +22,7 @@ async function getAuthenticatedUserId(expectedUserId?: string) {
 }
 
 export async function createAlert(params: {
-    userId: string;
+    userId?: string;
     symbol: string;
     targetPrice: number;
     condition: 'ABOVE' | 'BELOW';
@@ -31,7 +31,9 @@ export async function createAlert(params: {
         const authenticatedUserId = await getAuthenticatedUserId(params.userId);
         await connectToDatabase();
         const newAlert = await Alert.create({
-            ...params,
+            symbol: params.symbol,
+            targetPrice: params.targetPrice,
+            condition: params.condition,
             userId: authenticatedUserId,
             active: true,
         });
