@@ -10,14 +10,6 @@ declare global {
         password: string;
     };
 
-    type CountrySelectProps = {
-        name: string;
-        label: string;
-        control: Control;
-        error?: FieldError;
-        required?: boolean;
-    };
-
     type FormInputProps = {
         name: string;
         label: string;
@@ -55,12 +47,6 @@ declare global {
         renderAs?: 'button' | 'text';
         label?: string;
         initialStocks: StockWithWatchlistStatus[];
-    };
-
-    type WelcomeEmailData = {
-        email: string;
-        name: string;
-        intro: string;
     };
 
     type User = {
@@ -162,31 +148,6 @@ declare global {
 
     type WatchlistNewsProps = {
         news?: MarketNewsArticle[];
-    };
-
-    type SearchCommandProps = {
-        open?: boolean;
-        setOpen?: (open: boolean) => void;
-        renderAs?: 'button' | 'text';
-        buttonLabel?: string;
-        buttonVariant?: 'primary' | 'secondary';
-        className?: string;
-    };
-
-    type AlertData = {
-        symbol: string;
-        company: string;
-        alertName: string;
-        alertType: 'upper' | 'lower';
-        threshold: string;
-    };
-
-    type AlertModalProps = {
-        alertId?: string;
-        alertData?: AlertData;
-        action?: string;
-        open: boolean;
-        setOpen: (open: boolean) => void;
     };
 
     type RawNewsArticle = {
