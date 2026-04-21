@@ -1,19 +1,17 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import WatchlistStockChip from './WatchlistStockChip';
-import TradingViewWatchlist from './TradingViewWatchlist';
 import { Button } from '@/components/ui/button';
-import { ArrowDownAZ, ArrowUpZA, ArrowUpDown } from 'lucide-react';
+import { ArrowDownAZ, ArrowUpDown, ArrowUpZA } from 'lucide-react';
 import { WatchlistItem } from '@/database/models/watchlist.model';
 
 interface WatchlistManagerProps {
-    initialItems: WatchlistItem[]; // Using the DB model type directly or a simplified version
+    initialItems: WatchlistItem[];
     userId: string;
 }
 
 export default function WatchlistManager({ initialItems, userId }: WatchlistManagerProps) {
-    // Sort state: 'asc' (A-Z), 'desc' (Z-A), or null (added order/default)
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
 
     const toggleSort = () => {
@@ -28,9 +26,8 @@ export default function WatchlistManager({ initialItems, userId }: WatchlistMana
         return [...initialItems].sort((a, b) => {
             if (sortOrder === 'asc') {
                 return a.symbol.localeCompare(b.symbol);
-            } else {
-                return b.symbol.localeCompare(a.symbol);
             }
+            return b.symbol.localeCompare(a.symbol);
         });
     }, [initialItems, sortOrder]);
 
@@ -87,8 +84,11 @@ export default function WatchlistManager({ initialItems, userId }: WatchlistMana
                 )}
             </div>
 
-            <div className="min-h-[550px]">
-                <TradingViewWatchlist symbols={watchlistSymbols} />
+            <div className="bg-gray-900/20 rounded-xl border border-gray-800 p-5">
+                <h3 className="text-base font-semibold text-white mb-2">What this page is for</h3>
+                <p className="text-sm text-gray-400 leading-6">
+                    Use this space to keep your saved symbols organized and create simple price alerts. The watchlist is intentionally focused on quick symbol management instead of a second full-screen chart workspace.
+                </p>
             </div>
         </div>
     );
