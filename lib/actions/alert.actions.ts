@@ -1,10 +1,26 @@
 'use server';
 
 import { connectToDatabase } from '@/database/mongoose';
-import { Alert, type IAlert } from '@/database/models/alert.model';
+import { Alert } from '@/database/models/alert.model';
 import { revalidatePath } from 'next/cache';
+import { auth } from '@/lib/better-auth/auth';
+import { headers } from 'next/headers';
 
-// Create a new alert
+async function getAuthenticatedUserId(expectedUserId?: string) {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const sessionUserId = session?.user?.id;
+
+    if (!sessionUserId) {
+        throw new Error('Unauthorized');
+    }
+
+    if (expectedUserId && expectedUserId !== sessionUserId) {
+        throw new Error('Forbidden');
+    }
+
+    return sessionUserId;
+}
+
 export async function createAlert(params: {
     userId: string;
     symbol: string;
@@ -12,11 +28,12 @@ export async function createAlert(params: {
     condition: 'ABOVE' | 'BELOW';
 }) {
     try {
+        const authenticatedUserId = await getAuthenticatedUserId(params.userId);
         await connectToDatabase();
         const newAlert = await Alert.create({
             ...params,
+            userId: authenticatedUserId,
             active: true,
-            // expiresAt handled by default value in schema
         });
         revalidatePath('/watchlist');
         return JSON.parse(JSON.stringify(newAlert));
@@ -26,11 +43,11 @@ export async function createAlert(params: {
     }
 }
 
-// Get all alerts for a user
 export async function getUserAlerts(userId: string) {
     try {
+        const authenticatedUserId = await getAuthenticatedUserId(userId);
         await connectToDatabase();
-        const alerts = await Alert.find({ userId }).sort({ createdAt: -1 });
+        const alerts = await Alert.find({ userId: authenticatedUserId }).sort({ createdAt: -1 });
         return JSON.parse(JSON.stringify(alerts));
     } catch (error) {
         console.error('Error fetching alerts:', error);
@@ -38,11 +55,11 @@ export async function getUserAlerts(userId: string) {
     }
 }
 
-// Delete an alert
 export async function deleteAlert(alertId: string) {
     try {
+        const authenticatedUserId = await getAuthenticatedUserId();
         await connectToDatabase();
-        await Alert.findByIdAndDelete(alertId);
+        await Alert.findOneAndDelete({ _id: alertId, userId: authenticatedUserId });
         revalidatePath('/watchlist');
         return { success: true };
     } catch (error) {
@@ -51,11 +68,11 @@ export async function deleteAlert(alertId: string) {
     }
 }
 
-// Toggle alert active status (optional utility)
 export async function toggleAlert(alertId: string, active: boolean) {
     try {
+        const authenticatedUserId = await getAuthenticatedUserId();
         await connectToDatabase();
-        await Alert.findByIdAndUpdate(alertId, { active });
+        await Alert.findOneAndUpdate({ _id: alertId, userId: authenticatedUserId }, { active });
         revalidatePath('/watchlist');
         return { success: true };
     } catch (error) {
