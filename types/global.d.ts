@@ -113,10 +113,6 @@ declare global {
         currentPrice?: number;
     };
 
-    type WatchlistTableProps = {
-        watchlist: StockWithData[];
-    };
-
     type StockWithData = {
         userId: string;
         symbol: string;
@@ -128,49 +124,6 @@ declare global {
         changeFormatted?: string;
         marketCap?: string;
         peRatio?: string;
-    };
-
-    type AlertsListProps = {
-        alertData: Alert[] | undefined;
-    };
-
-    type MarketNewsArticle = {
-        id: number;
-        headline: string;
-        summary: string;
-        source: string;
-        url: string;
-        datetime: number;
-        category: string;
-        related: string;
-        image?: string;
-    };
-
-    type WatchlistNewsProps = {
-        news?: MarketNewsArticle[];
-    };
-
-    type RawNewsArticle = {
-        id: number;
-        headline?: string;
-        summary?: string;
-        source?: string;
-        url?: string;
-        datetime?: number;
-        image?: string;
-        category?: string;
-        related?: string;
-    };
-
-    type Alert = {
-        id: string;
-        symbol: string;
-        company: string;
-        alertName: string;
-        currentPrice: number;
-        alertType: 'upper' | 'lower';
-        threshold: number;
-        changePercent?: number;
     };
 }
 
