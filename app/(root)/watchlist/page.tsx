@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getUserWatchlist } from '@/lib/actions/watchlist.actions';
 import { getUserAlerts } from '@/lib/actions/alert.actions';
+import { searchStocks } from '@/lib/actions/finnhub.actions';
 import WatchlistManager from '@/components/watchlist/WatchlistManager';
 import AlertsPanel from '@/components/watchlist/AlertsPanel';
 import SearchCommand from '@/components/SearchCommand';
@@ -19,9 +20,10 @@ export default async function WatchlistPage() {
 
     const userId = session.user.id;
 
-    const [watchlistItems, alerts] = await Promise.all([
+    const [watchlistItems, alerts, initialStocks] = await Promise.all([
         getUserWatchlist(userId),
         getUserAlerts(userId),
+        searchStocks(),
     ]);
 
     return (
@@ -34,7 +36,7 @@ export default async function WatchlistPage() {
                     <p className="text-gray-500 mt-1">Track your saved symbols and manage the alerts tied to them.</p>
                 </div>
                 <div className="flex items-center space-x-4">
-                    <SearchCommand renderAs="button" label="Add Stock" initialStocks={[]} />
+                    <SearchCommand renderAs="button" label="Add Stock" initialStocks={initialStocks} />
                 </div>
             </div>
 
