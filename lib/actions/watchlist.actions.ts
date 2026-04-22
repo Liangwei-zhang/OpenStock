@@ -21,7 +21,7 @@ async function getAuthenticatedUserId(expectedUserId?: string) {
     return sessionUserId;
 }
 
-export async function addToWatchlist(userId: string, symbol: string, company: string) {
+export async function addToWatchlist(userId: string | undefined, symbol: string, company: string) {
     try {
         const authenticatedUserId = await getAuthenticatedUserId(userId);
         await connectToDatabase();
@@ -32,7 +32,7 @@ export async function addToWatchlist(userId: string, symbol: string, company: st
                 userId: authenticatedUserId,
                 symbol: symbol.toUpperCase(),
                 company,
-                addedAt: new Date()
+                addedAt: new Date(),
             },
             { upsert: true, new: true }
         );
@@ -45,7 +45,7 @@ export async function addToWatchlist(userId: string, symbol: string, company: st
     }
 }
 
-export async function removeFromWatchlist(userId: string, symbol: string) {
+export async function removeFromWatchlist(userId: string | undefined, symbol: string) {
     try {
         const authenticatedUserId = await getAuthenticatedUserId(userId);
         await connectToDatabase();
@@ -104,4 +104,4 @@ export async function getWatchlistSymbolsByEmail(email: string): Promise<string[
         console.error('getWatchlistSymbolsByEmail error:', err);
         return [];
     }
-} 
+}
