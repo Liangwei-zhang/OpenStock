@@ -5,7 +5,7 @@ import { POPULAR_STOCK_SYMBOLS } from '@/lib/constants';
 import { cache } from 'react';
 
 const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
-const NEXT_PUBLIC_FINNHUB_API_KEY = process.env.NEXT_PUBLIC_FINNHUB_API_KEY ?? '';
+const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY ?? process.env.NEXT_PUBLIC_FINNHUB_API_KEY ?? '';
 
 async function fetchJSON<T>(url: string, revalidateSeconds?: number): Promise<T> {
     const options: RequestInit & { next?: { revalidate?: number } } = revalidateSeconds
@@ -24,9 +24,8 @@ export { fetchJSON };
 
 export async function getQuote(symbol: string) {
     try {
-        const token = NEXT_PUBLIC_FINNHUB_API_KEY;
+        const token = FINNHUB_API_KEY;
         const url = `${FINNHUB_BASE_URL}/quote?symbol=${encodeURIComponent(symbol)}&token=${token}`;
-        // No caching for real-time price
         return await fetchJSON<any>(url, 0);
     } catch (e) {
         console.error('Error fetching quote for', symbol, e);
@@ -36,9 +35,8 @@ export async function getQuote(symbol: string) {
 
 export async function getCompanyProfile(symbol: string) {
     try {
-        const token = NEXT_PUBLIC_FINNHUB_API_KEY;
+        const token = FINNHUB_API_KEY;
         const url = `${FINNHUB_BASE_URL}/stock/profile2?symbol=${encodeURIComponent(symbol)}&token=${token}`;
-        // Cache profile for 24 hours
         return await fetchJSON<any>(url, 86400);
     } catch (e) {
         console.error('Error fetching profile for', symbol, e);
@@ -49,7 +47,6 @@ export async function getCompanyProfile(symbol: string) {
 export async function getWatchlistData(symbols: string[]) {
     if (!symbols || symbols.length === 0) return [];
 
-    // Fetch quotes and profiles in parallel
     const promises = symbols.map(async (sym) => {
         const [quote, profile] = await Promise.all([
             getQuote(sym),
@@ -65,18 +62,17 @@ export async function getWatchlistData(symbols: string[]) {
             name: profile?.name || sym,
             logo: profile?.logo,
             marketCap: profile?.marketCapitalization,
-            peRatio: 0 // Finnhub 'quote' and 'profile2' don't easily give real-time PE. Might need 'metric' endpoint, but skipping for now to save rate limits.
+            peRatio: 0
         };
     });
 
     return await Promise.all(promises);
 }
 
-
 export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> {
     try {
         const range = getDateRange(5);
-        const token = NEXT_PUBLIC_FINNHUB_API_KEY;
+        const token = FINNHUB_API_KEY;
         if (!token) {
             throw new Error('FINNHUB API key is not configured');
         }
@@ -86,7 +82,6 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
 
         const maxArticles = 6;
 
-        // If we have symbols, try to fetch company news per symbol and round-robin select
         if (cleanSymbols.length > 0) {
             const perSymbolArticles: Record<string, RawNewsArticle[]> = {};
 
@@ -104,7 +99,6 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
             );
 
             const collected: MarketNewsArticle[] = [];
-            // Round-robin up to 6 picks
             for (let round = 0; round < maxArticles; round++) {
                 for (let i = 0; i < cleanSymbols.length; i++) {
                     const sym = cleanSymbols[i];
@@ -119,14 +113,11 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
             }
 
             if (collected.length > 0) {
-                // Sort by datetime desc
                 collected.sort((a, b) => (b.datetime || 0) - (a.datetime || 0));
                 return collected.slice(0, maxArticles);
             }
-            // If none collected, fall through to general news
         }
 
-        // General market news fallback or when no symbols provided
         const generalUrl = `${FINNHUB_BASE_URL}/news?category=general&token=${token}`;
         const general = await fetchJSON<RawNewsArticle[]>(generalUrl, 300);
 
@@ -138,7 +129,7 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
             if (seen.has(key)) continue;
             seen.add(key);
             unique.push(art);
-            if (unique.length >= 20) break; // cap early before final slicing
+            if (unique.length >= 20) break;
         }
 
         const formatted = unique.slice(0, maxArticles).map((a, idx) => formatArticle(a, false, undefined, idx));
@@ -151,9 +142,8 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
 
 export const searchStocks = cache(async (query?: string): Promise<StockWithWatchlistStatus[]> => {
     try {
-        const token = NEXT_PUBLIC_FINNHUB_API_KEY;
+        const token = FINNHUB_API_KEY;
         if (!token) {
-            // If no token, log and return empty to avoid throwing per requirements
             console.error('Error in stock search:', new Error('FINNHUB API key is not configured'));
             return [];
         }
@@ -163,13 +153,11 @@ export const searchStocks = cache(async (query?: string): Promise<StockWithWatch
         let results: FinnhubSearchResult[] = [];
 
         if (!trimmed) {
-            // Fetch top 10 popular symbols' profiles
             const top = POPULAR_STOCK_SYMBOLS.slice(0, 10);
             const profiles = await Promise.all(
                 top.map(async (sym) => {
                     try {
                         const url = `${FINNHUB_BASE_URL}/stock/profile2?symbol=${encodeURIComponent(sym)}&token=${token}`;
-                        // Revalidate every hour
                         const profile = await fetchJSON<any>(url, 3600);
                         return { sym, profile } as { sym: string; profile: any };
                     } catch (e) {
@@ -191,10 +179,7 @@ export const searchStocks = cache(async (query?: string): Promise<StockWithWatch
                         displaySymbol: symbol,
                         type: 'Common Stock',
                     };
-                    // We don't include exchange in FinnhubSearchResult type, so carry via mapping later using profile
-                    // To keep pipeline simple, attach exchange via closure map stage
-                    // We'll reconstruct exchange when mapping to final type
-                    (r as any).__exchange = exchange; // internal only
+                    (r as any).__exchange = exchange;
                     return r;
                 })
                 .filter((x): x is FinnhubSearchResult => Boolean(x));
