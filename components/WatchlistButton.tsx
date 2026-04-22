@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useMemo, useState } from "react";
 import { addToWatchlist, removeFromWatchlist } from "@/lib/actions/watchlist.actions";
 import { toast } from "sonner";
@@ -9,7 +10,7 @@ interface WatchlistButtonProps {
     isInWatchlist: boolean;
     showTrashIcon?: boolean;
     type?: "button" | "icon";
-    userId?: string; // Made optional for backward compat, but required for actions
+    userId?: string;
     onWatchlistChange?: (symbol: string, added: boolean) => void;
 }
 
@@ -26,39 +27,30 @@ const WatchlistButton = ({
     const [loading, setLoading] = useState(false);
 
     const label = useMemo(() => {
-        if (type === "icon") return added ? "" : "";
+        if (type === "icon") return "";
         return added ? "Remove from Watchlist" : "Add to Watchlist";
     }, [added, type]);
 
     const handleClick = async (e: React.MouseEvent) => {
-        e.preventDefault(); // Prevent link navigation if inside a link
-
-        if (!userId && !onWatchlistChange) {
-            console.error("WatchlistButton: userId or onWatchlistChange is required");
-            toast.error("Please sign in to modify watchlist");
-            return;
-        }
+        e.preventDefault();
 
         const next = !added;
-        setAdded(next); // Optimistic update
+        setAdded(next);
         setLoading(true);
 
         try {
-            if (userId) {
-                if (next) {
-                    await addToWatchlist(userId, symbol, company);
-                    toast.success(`${symbol} added to watchlist`);
-                } else {
-                    await removeFromWatchlist(userId, symbol);
-                    toast.success(`${symbol} removed from watchlist`);
-                }
+            if (next) {
+                await addToWatchlist(userId, symbol, company);
+                toast.success(`${symbol} added to watchlist`);
+            } else {
+                await removeFromWatchlist(userId, symbol);
+                toast.success(`${symbol} removed from watchlist`);
             }
 
-            // Call external handler if provided (e.g. for UI refresh)
             onWatchlistChange?.(symbol, next);
         } catch (error) {
             console.error("Watchlist action failed:", error);
-            setAdded(!next); // Revert on error
+            setAdded(!next);
             toast.error("Failed to update watchlist");
         } finally {
             setLoading(false);
