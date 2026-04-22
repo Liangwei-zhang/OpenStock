@@ -9,6 +9,7 @@ export interface IAlert extends Document {
     triggered: boolean;
     expiresAt: Date;
     createdAt: Date;
+    updatedAt: Date;
 }
 
 const AlertSchema = new Schema<IAlert>(
@@ -21,9 +22,8 @@ const AlertSchema = new Schema<IAlert>(
         triggered: { type: Boolean, default: false },
         expiresAt: {
             type: Date,
-            default: () => new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days from now
+            default: () => new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
         },
-        createdAt: { type: Date, default: Date.now },
     },
     { timestamps: true }
 );
